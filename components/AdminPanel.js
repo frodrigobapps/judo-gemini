@@ -23,8 +23,10 @@ export default function AdminPanel({ onContentUploaded }) {
 
     try {
       setUploading(true)
-      const fileName = `${Date.now()}_${file.name}`
-      
+
+      // Genera nombre limpio (evita "undefined")
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`
+
       // 1. Subir el archivo a Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('private_content') // El nombre de tu bucket privado
@@ -32,10 +34,13 @@ export default function AdminPanel({ onContentUploaded }) {
 
       if (uploadError) throw uploadError
 
-      // 2. Obtener la URL pública (o firmada) del archivo subido
-      const { data: { publicUrl } } = supabase.storage
+      // 2. Obtener una URL firmada (signed URL) para acceso temporal
+      const { data, error: signedUrlError } = await supabase.storage
         .from('private_content')
-        .getPublicUrl(fileName)
+        .createSignedUrl(fileName, 3600) // URL válida por 1 hora
+
+      if (signedUrlError) throw signedUrlError
+      const signedUrl = data.signedUrl
 
       // 3. Insertar el nuevo contenido en la base de datos
       const { error: insertError } = await supabase
@@ -43,11 +48,11 @@ export default function AdminPanel({ onContentUploaded }) {
         .insert({
           title,
           description,
-          file_url: publicUrl,
+          file_url: signedUrl, // ✅ Guardamos la URL firmada
           content_type: file.type,
           is_published: true, // Publicar inmediatamente
         })
-      
+
       if (insertError) throw insertError
 
       alert('¡Contenido subido con éxito!')
@@ -55,8 +60,8 @@ export default function AdminPanel({ onContentUploaded }) {
       setTitle('')
       setDescription('')
       setFile(null)
-      document.querySelector('input[type="file"]').value = "";
-      onContentUploaded(); // Llama a la función del padre para refrescar
+      document.querySelector('input[type="file"]').value = ""
+      onContentUploaded() // Llama a la función del padre para refrescar
 
     } catch (error) {
       console.error('Error subiendo contenido:', error)
