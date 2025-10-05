@@ -1,11 +1,10 @@
 // components/Layout.js
 import Link from 'next/link';
-import { useSession, useUser } from '@supabase/auth-helpers-react';
+import { useSession } from '@supabase/auth-helpers-react';
 import { supabase } from '../lib/supabase';
 
 const Layout = ({ children }) => {
   const session = useSession();
-  const user = useUser();
 
   return (
     <div>
