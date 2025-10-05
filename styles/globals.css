@@ -126,3 +126,116 @@ button:disabled {
 .content-card h3 {
   margin-top: 0;
 }
+/* styles/globals.css (ADICIONES) */
+
+/* --- Layout y Navegación --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .logo a {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links a, .logout-button {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 8px 0;
+}
+
+.nav-links a:hover {
+    opacity: 0.8;
+}
+
+.nav-button {
+    background-color: #38a169; /* Verde para llamar la atención */
+    padding: 8px 15px !important;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.text-link {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+/* --- Admin Panel --- */
+.tabs-navigation button {
+    background-color: var(--border-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+}
+.tabs-navigation button.active {
+    background-color: var(--card-background);
+    border-bottom: 1px solid var(--card-background);
+    font-weight: bold;
+}
+
+.admin-section {
+    padding: 20px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-top: none;
+}
+
+/* Gestión de Miembros */
+.member-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.member-table th, .member-table td {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+.member-table select {
+    padding: 5px;
+}
+
+/* Edición y Eliminación de Contenido */
+.content-list-admin {
+    margin-top: 30px;
+}
+.content-item-admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px dashed var(--border-color);
+}
+.content-item-admin button {
+    width: auto;
+    padding: 5px 10px;
+    margin-left: 10px;
+}
+.edit-button { background-color: #f6e05e; color: #1a202c; }
+.delete-button { background-color: #e53e3e; color: white; }
