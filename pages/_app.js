@@ -1,4 +1,4 @@
-// pages/_app.js (MODIFICADO)
+// pages/_app.js
 import { useState } from 'react';
 import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
@@ -13,7 +13,6 @@ function MyApp({ Component, pageProps }) {
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      {/* Envolver el componente con el Layout */}
       <Layout> 
         <Component {...pageProps} />
       </Layout>
