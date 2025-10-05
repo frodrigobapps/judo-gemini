@@ -1,4 +1,4 @@
-// components/Auth.js (MODIFICADO)
+// components/Auth.js
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -6,24 +6,40 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isForgotPassword, setIsForgotPassword] = useState(false); // Nuevo estado
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const handleLogin = async (e) => {
-    // ... (Tu código de handleLogin anterior)
+    e.preventDefault(); // Crucial para detener el refresh del formulario
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      // Redirección manejada por el hook de Next.js
+    } catch (error) {
+      alert(error.error_description || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignUp = async (e) => {
-    // ... (Tu código de handleSignUp anterior)
+  const handleSignUp = async () => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      alert('¡Registro exitoso! Revisa tu email para confirmar y luego inicia sesión.');
+    } catch (error) {
+      alert(error.error_description || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // NUEVA FUNCIÓN: Manejar el envío de restablecimiento de contraseña
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        // Debes especificar la URL a la que el usuario será redirigido
-        // para cambiar su contraseña. Crearemos esta página en el siguiente paso.
         redirectTo: `${window.location.origin}/update-password`,
       });
       if (error) throw error;
@@ -35,8 +51,7 @@ export default function Auth() {
       setLoading(false);
     }
   };
-  
-  // Condicional para mostrar el formulario de restablecimiento
+
   if (isForgotPassword) {
     return (
       <div className="auth-container">
@@ -60,24 +75,40 @@ export default function Auth() {
     );
   }
 
-  // Formulario principal (Login/Registro)
   return (
     <div className="auth-container">
       <h1>Academia de Judo</h1>
       <p>Inicia sesión o crea una cuenta</p>
-      <form>
-        {/* ... Campos de email y password anteriores ... */}
-        {/* Usar handleSubmit para manejar el submit del formulario */}
+      
+      {/* Formulario principal, gestionado por handleLogin */}
+      <form onSubmit={handleLogin} className="auth-form"> 
+        <input
+          type="email"
+          placeholder="Tu email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Tu contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
         <div className="auth-buttons">
-          <button onClick={handleLogin} disabled={loading}>
+          {/* Botón de Submit */}
+          <button type="submit" disabled={loading}>
             {loading ? 'Cargando...' : 'Iniciar Sesión'}
           </button>
-          <button onClick={handleSignUp} disabled={loading}>
+          
+          {/* Botón de Registro (type="button" para no enviar el formulario) */}
+          <button type="button" onClick={handleSignUp} disabled={loading}>
             {loading ? 'Cargando...' : 'Registrarse'}
           </button>
         </div>
       </form>
-      {/* Botón para ir al formulario de olvido de contraseña */}
+      
       <button className="text-link" onClick={() => setIsForgotPassword(true)}>
         ¿Olvidaste tu Contraseña?
       </button>
