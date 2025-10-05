@@ -1,12 +1,10 @@
 // pages/index.js
-import { useSession, useUser } from '@supabase/auth-helpers-react'
-import Link from 'next/link'
-import Auth from '../components/Auth'
-import { supabase } from '../lib/supabase'
+import { useSession } from '@supabase/auth-helpers-react';
+import Link from 'next/link';
+import Auth from '../components/Auth';
 
 export default function Home() {
-  const session = useSession()
-  const user = useUser()
+  const session = useSession();
 
   return (
     <div className="container">
@@ -14,15 +12,13 @@ export default function Home() {
         <Auth />
       ) : (
         <div className="welcome-container">
-          <h2>¡Bienvenido de nuevo, {user.email}!</h2>
+          <h2>¡Bienvenido!</h2>
+          <p>Ya puedes acceder al contenido exclusivo.</p>
           <Link href="/dashboard">
-            <button className="primary-button">Ir al Dashboard de Contenido</button>
+            <button className="primary-button">Ir al Dashboard</button>
           </Link>
-          <button className="secondary-button" onClick={() => supabase.auth.signOut()}>
-            Cerrar Sesión
-          </button>
         </div>
       )}
     </div>
-  )
+  );
 }
