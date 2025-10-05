@@ -33,3 +33,21 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
+// components/Layout.js (SOLO SE MUESTRA EL BLOQUE RELEVANTE)
+
+// ...
+
+          {session ? (
+            // Enlaces para usuarios logueados
+            <>
+              <Link href="/dashboard" className="nav-button">Dashboard</Link>
+              <button onClick={() => supabase.auth.signOut()} className="logout-button">Salir</button>
+            </>
+          ) : (
+            // Enlace para usuarios no logueados
+            // CAMBIADO: Usar un botón más directo que refleje la acción
+            <Link href="/" className="nav-button">Iniciar Sesión</Link> 
+          )}
+        </div>
+      </nav>
+// ...
