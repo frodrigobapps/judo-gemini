@@ -1,21 +1,23 @@
-// pages/_app.js
-import { useState } from 'react'
-import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs'
-import { SessionContextProvider } from '@supabase/auth-helpers-react'
-import '../styles/globals.css' // Importamos los estilos globales
+// pages/_app.js (MODIFICADO)
+import { useState } from 'react';
+import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
+import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import Layout from '../components/Layout'; // Importar el Layout
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
-  // Creamos una única instancia del cliente de Supabase
-  const [supabaseClient] = useState(() => createPagesBrowserClient())
+  const [supabaseClient] = useState(() => createPagesBrowserClient());
 
   return (
     <SessionContextProvider
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      <Component {...pageProps} />
+      {/* Envolver el componente con el Layout */}
+      <Layout> 
+        <Component {...pageProps} />
+      </Layout>
     </SessionContextProvider>
-  )
+  );
 }
-
-export default MyApp
+export default MyApp;
