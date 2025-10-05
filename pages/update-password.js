@@ -9,13 +9,13 @@ export default function UpdatePassword() {
   const [message, setMessage] = useState('');
   const router = useRouter();
   
-  // Asegurarse de que Supabase haya procesado el token de la URL antes de mostrar el formulario
+  // Escucha el cambio de estado de autenticación (debe estar activado por el token en la URL)
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY' || session) {
         setMessage('Ingresa tu nueva contraseña a continuación.');
       } else {
-        setMessage('Acceso no autorizado. Por favor, usa el enlace de tu email.');
+        setMessage('Error de token. Por favor, usa el enlace de tu email.');
       }
     });
   }, []);
@@ -26,7 +26,6 @@ export default function UpdatePassword() {
 
     try {
       setLoading(true);
-      // Actualiza la contraseña para el usuario actualmente autenticado (por el token)
       const { error } = await supabase.auth.updateUser({ password });
 
       if (error) throw error;
@@ -37,7 +36,7 @@ export default function UpdatePassword() {
       }, 2000);
 
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
+      setMessage(`Error al actualizar: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -47,7 +46,8 @@ export default function UpdatePassword() {
     <div className="auth-container">
       <h2>Actualizar Contraseña</h2>
       <p>{message}</p>
-      {/* Solo mostramos el formulario si hay un mensaje que lo sugiere */}
+      
+      {/* Solo mostramos el formulario si el token es válido */}
       {message.includes('Ingresa') && (
         <form className="auth-form" onSubmit={handleUpdatePassword}>
           <input
@@ -58,7 +58,7 @@ export default function UpdatePassword() {
             required
           />
           <button type="submit" disabled={loading}>
-            {loading ? 'Cargando...' : 'Guardar Nueva Contraseña'}
+            {loading ? 'Guardando...' : 'Guardar Nueva Contraseña'}
           </button>
         </form>
       )}
