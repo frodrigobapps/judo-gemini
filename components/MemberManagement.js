@@ -12,7 +12,7 @@ const MemberManagement = () => {
 
   const fetchMembers = async () => {
     setLoading(true);
-    // Unir profiles con la tabla auth.users para obtener el email (necesita permiso)
+    // Unir profiles con la tabla auth.users para obtener el email
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, role, auth_users:auth.users(email, created_at)')
@@ -44,21 +44,15 @@ const MemberManagement = () => {
   const handleDeleteMember = async (memberId, email) => {
     if (!confirm(`¿Estás seguro de ELIMINAR al usuario ${email}? Esta acción es irreversible.`)) return;
     
-    // 1. Borrar el perfil
-    const { error: profileError } = await supabase.from('profiles').delete().eq('id', memberId);
-    if (profileError) {
-      alert(`Error al borrar perfil: ${profileError.message}`);
-      return;
-    }
-
-    // 2. Borrar el usuario de auth.users (requiere que el usuario esté logueado como admin)
+    // Llamar a la función RPC que creamos en el backend
     const { error: userError } = await supabase.rpc('delete_user_by_id', { user_id_in: memberId });
+    
     if (userError) {
-       // Nota: Esta función RPC no existe por defecto, ver paso 3 en el backend
-       alert(`Error al borrar usuario de Auth: ${userError.message}`);
-       return;
+       alert(`Error al borrar usuario: ${userError.message}. Verifica la función RPC en Supabase.`);
+    } else {
+        alert(`Usuario ${email} eliminado correctamente.`);
     }
-
+    
     fetchMembers();
   };
 
@@ -94,7 +88,8 @@ const MemberManagement = () => {
                 <button
                   onClick={() => handleDeleteMember(member.id, member.auth_users?.email)}
                   className="delete-button"
-                  disabled={member.role === 'admin'} // Evitar borrar a otros admins accidentalmente
+                  // Deshabilitar la eliminación si el usuario es el administrador actualmente logueado
+                  disabled={member.id === supabase.auth.user()?.id}
                 >
                   Eliminar
                 </button>
